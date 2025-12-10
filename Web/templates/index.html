@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Kapal ASV - Gamantaray</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding: 50px; }
+        .dashboard { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .card { 
+            background: white; padding: 20px; border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 200px;
+        }
+        h2 { color: #333; }
+        .value { font-size: 24px; font-weight: bold; color: #007bff; margin-top: 10px; }
+        .status-box { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+    <div class="status-box">
+        <h1>ASV Monitoring System</h1>
+        <p>Status Misi: <span id="misi_status" style="color: green; font-weight: bold;">Menunggu Data...</span></p>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Kecepatan</h3>
+            <div class="value"><span id="speed">0</span> Knots</div>
+        </div>
+
+        <div class="card">
+            <h3>Baterai</h3>
+            <div class="value"><span id="battery">0</span> %</div>
+        </div>
+
+        <div class="card" style="width: 300px;">
+            <h3>Koordinat GPS</h3>
+            <div class="value" id="gps" style="font-size: 18px;">- , -</div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk mengambil data dari Backend Python
+        function updateData() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('speed').innerText = data.kecepatan;
+                    document.getElementById('battery').innerText = data.baterai;
+                    document.getElementById('gps').innerText = data.posisi;
+                    document.getElementById('misi_status').innerText = data.status;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Jalankan fungsi update setiap 1 detik (1000 ms)
+        setInterval(updateData, 1000);
+    </script>
+
+</body>
+</html>
